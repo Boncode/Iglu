@@ -21,7 +21,6 @@ package org.ijsberg.iglu;
 
 /**
  * Is thrown if execution of a task is no longer possible due to uncontrollable circumstances.
- * test
  */
 public class FatalException extends RuntimeException {
 	public FatalException() {
