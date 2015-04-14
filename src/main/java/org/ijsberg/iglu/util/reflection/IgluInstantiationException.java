@@ -28,7 +28,7 @@ public class IgluInstantiationException extends InstantiationException {
 		if(cause == null) {
 			return super.getStackTrace();
 		}
-		List<StackTraceElement> stackTraceElements = Arrays.asList(super.getStackTrace());
+		List<StackTraceElement> stackTraceElements = new ArrayList<StackTraceElement>(Arrays.asList(super.getStackTrace()));
 		stackTraceElements.addAll(Arrays.asList(cause.getStackTrace()));
 		return stackTraceElements.toArray(new StackTraceElement[]{});
 	}
