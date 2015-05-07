@@ -251,4 +251,9 @@ public abstract class Converter {
 		throw new IllegalArgumentException("arguments " + Arrays.asList(objects) +
 				" can not be converted to types " + Arrays.asList(targetTypes));
 	}
+
+
+	public static double convertToGbSize(long valueInBytes) {
+		return 1.0 * valueInBytes / (1024 * 1024 * 1024);
+	}
 }

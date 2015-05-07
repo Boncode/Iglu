@@ -21,6 +21,8 @@ package org.ijsberg.iglu.util.types;
 
 import org.junit.Test;
 
+import java.io.File;
+
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -248,5 +250,10 @@ public class ConverterTest {
 
 		objects = Converter.convertToMatchingTypes(new String[0], new Class[0]);
 		assertEquals(0, objects.length);
+	}
+
+	@Test
+	public void convertToGbSizeTest() {
+		assertEquals(5.49, Converter.convertToGbSize(5904000000L), .01);
 	}
 }

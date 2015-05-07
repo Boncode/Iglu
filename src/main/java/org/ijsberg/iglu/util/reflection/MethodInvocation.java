@@ -75,6 +75,7 @@ public class MethodInvocation {
 	 * @throws NoSuchMethodException     if no suitable method is found
 	 */
 	public Object invoke() throws InvocationTargetException, NoSuchMethodException {
+
 		retval = null;
 		invocationSucceeded = false;
 
@@ -103,6 +104,7 @@ public class MethodInvocation {
 					return;
 				} catch (IllegalArgumentException iae) {
 					failedInvocation = iae;
+					iae.printStackTrace();
 				}
 			}
 		}
@@ -116,7 +118,7 @@ public class MethodInvocation {
 			invocationSucceeded = true;
 		} catch (NoSuchMethodException e) {
 			//there are other possibilities to explore
-//            e.printStackTrace();
+            e.printStackTrace();
 		}
 	}
 
