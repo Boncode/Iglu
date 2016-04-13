@@ -56,10 +56,6 @@ public abstract class Converter {
 		return new Integer(input.toString());
 	}
 
-	/**
-	 * @param input
-	 * @return
-	 */
 	public static Long convertToLong(Object input) {
 		if (input instanceof Long) {
 			return (Long) input;
@@ -71,6 +67,17 @@ public abstract class Converter {
 			return new Long(((Character) input));
 		}
 		return new Long(input.toString());
+	}
+
+	/**
+	 * @param input
+	 * @return
+	 */
+	public static Long convertToLong(Object input, Long defaultVal) {
+		if(input == null) {
+			return defaultVal;
+		}
+		return convertToLong(input);
 	}
 
 	/**
@@ -149,10 +156,17 @@ public abstract class Converter {
 		return Boolean.valueOf(input.toString());
 	}
 
-	/**
-	 * @param input
-	 * @return
-	 */
+	public static Boolean convertToBoolean(Object input, Boolean defaultVal) {
+		if(input == null) {
+			return defaultVal;
+		}
+		return convertToBoolean(input);
+	}
+
+		/**
+         * @param input
+         * @return
+         */
 	public static Character convertToCharacter(Object input) {
 		if (input instanceof Character) {
 			return (Character) input;
@@ -252,6 +266,12 @@ public abstract class Converter {
 				" can not be converted to types " + Arrays.asList(targetTypes));
 	}
 
+	public static String convertToString(Object value, String defaultValue) {
+		if(value == null) {
+			return defaultValue;
+		}
+		return value.toString();
+	}
 
 	public static double convertToGbSize(long valueInBytes) {
 		return 1.0 * valueInBytes / (1024 * 1024 * 1024);
