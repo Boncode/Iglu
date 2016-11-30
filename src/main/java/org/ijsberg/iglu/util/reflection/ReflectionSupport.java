@@ -83,6 +83,29 @@ public class ReflectionSupport {
 
 
 	/**
+	 * @param clasz
+	 * @return all interfaces the given class implements directly or implicitly
+	 */
+	public static ArrayList<Class<?>> getInterfacesAndSuperClassesForClass(Class<? extends Object> clasz) {
+
+		ArrayList<Class<? extends Object>> result = new ArrayList<Class<? extends Object>>();
+
+		ArrayList<Class<? extends Object>> superClasses = getAllSuperClassesFromClass(clasz);
+		result.addAll(superClasses);
+		result.add(clasz);
+
+		for (Class<?> superClass : superClasses) {
+			Class<?>[] interfaces = superClass.getInterfaces();
+			for (int j = 0; j < interfaces.length; j++) {
+				if (!superClasses.contains(interfaces[j])) {
+					result.add(interfaces[j]);
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
 	 * Arguments do not have to match exactly; they will be converted if possible.
 	 *
 	 * @param impl       the object on which the method is invoked
