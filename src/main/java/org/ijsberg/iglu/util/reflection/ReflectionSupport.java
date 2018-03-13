@@ -196,7 +196,6 @@ public class ReflectionSupport {
 	 */
 	public static <T> T instantiateClass(Class<T> clasz, Object... initArgs)
 			throws InstantiationException {
-
 		Exception lastException = null;
 		Constructor<?> constructor = lastUsedConstructors.get(clasz);
 		if(constructor != null) {
@@ -208,14 +207,10 @@ public class ReflectionSupport {
 						getInstantiationDetails(clasz, initArgs), e);
 			}
 		}
-
-
 		if (initArgs == null) {
 			initArgs = new Object[0];
 		}
 		Class<?>[] initArgTypes = getTypesForArgs(initArgs);
-
-
 		try {
 			//expensive call
 			constructor = clasz.getConstructor(initArgTypes);
@@ -229,7 +224,16 @@ public class ReflectionSupport {
 	}
 
 	private static String getInstantiationDetails(Class clasz, Object[] initargs) {
-		return clasz.getName() + " with arguments: " + Arrays.asList(initargs);
+		String retval = clasz.getName() + " with arguments: " + getArguemntTypes(initargs);
+		return retval;
+	}
+
+	private static String getArguemntTypes(Object[] initargs) {
+		StringBuffer result = new StringBuffer();
+		for(Object initArg : initargs) {
+			result.append((result.length() > 0 ? ",":"") + initArg.getClass().getSimpleName());
+		}
+		return result.toString();
 	}
 
 	private static <T> T getInstanceForTranslatedArgs(Class<T> clasz, Class<?>[] initArgTypes, Exception lastException, Object[] initArgs) throws InstantiationException {
