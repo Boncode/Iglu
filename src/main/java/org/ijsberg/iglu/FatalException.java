@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2014 Jeroen Meetsma - IJsberg Automatisering BV
+ * Copyright 2011-2018 Jeroen Meetsma - IJsberg Automatisering BV
  *
  * This file is part of Iglu.
  *
