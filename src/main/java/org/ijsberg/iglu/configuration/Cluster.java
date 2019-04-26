@@ -49,6 +49,8 @@ public interface Cluster extends Connector {
 	 */
 	Set<Component> getExternalComponents();
 
+	boolean isConnected(Component component);
+
 	/**
 	 * Connects internal component and exposes interfaces.
 	 *

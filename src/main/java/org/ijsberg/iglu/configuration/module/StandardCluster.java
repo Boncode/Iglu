@@ -36,6 +36,7 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 	private Set<Component> externalComponents = new HashSet<Component>();
 	private HashMap<String, Component> internalComponentsById = new HashMap<String, Component>();
 
+	@Override
 	public boolean isConnected(Component component) {
 		return isConnectedInternally(component) || isConnectedExternally(component);
 	}
@@ -67,6 +68,10 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 		internalComponentsById.put(componentId, component);
 		setDependenciesForNewInternalComponent(componentId, component);
 		registerExternalComponentAsListener(componentId, component);
+		for(Cluster cluster : clustersDependingOn) {
+			cluster.getFacade().connect(component);
+		}
+
 	}
 
 	/**
@@ -82,10 +87,6 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 		ensureComponentExposesInterfaces(component, Arrays.<Class<?>>asList(exposedInterfaces));
 		connect(componentId, component);
 		setExposedInterfaces(componentId, component, exposedInterfaces);
-
-		for(Cluster dependentCluster : dependentClusters) {
-			dependentCluster.connect(componentId, component);
-		}
 	}
 
 	/**
@@ -407,17 +408,29 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 	////////////////////////////////////
 	/**
 	 *
-	 * @param componentId
+	 * @param clusterName
 	 * @param cluster
 	 * @throws ConfigurationException if the component is already registered
 	 */
 	@Override
-	public void connect(String componentId, Cluster cluster) throws ConfigurationException {
+	public void connect(String clusterName, Cluster cluster) throws ConfigurationException {
 
-		if(!(cluster instanceof StandardCluster)) {
+/*		if(!(cluster instanceof StandardCluster)) {
 			throw new ConfigurationException("cannot connect cluster " + componentId + " of type " + cluster.getClass().getSimpleName() + " to StandardCluster");
+		}*/
+		if(isRegisteredCluster(cluster)) {
+			System.out.println("WARNING: cluster already dependent on " + clusterName);
+		} else if(cluster == this) {
+			System.out.println("WARNING: cluster cannot be depending onto itself under id " + clusterName);
+		} else {
+			for (Component internalComponent : internalComponentsById.values()) {
+				if(!cluster.isConnected(internalComponent)) {
+					cluster.getFacade().connect(internalComponent);
+				}
+			}
+			clustersDependingOn.add(cluster);
 		}
-		StandardCluster standardCluster = (StandardCluster) cluster;
+/*		StandardCluster standardCluster = (StandardCluster) cluster;
 		connect(componentId, new StandardComponent(cluster));
 		if(standardCluster.isRegisteredDependentCluster(this)) {
 			System.out.println("WARNING: already registered as dependent cluster on " + componentId);
@@ -425,10 +438,16 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 			System.out.println("WARNING: cluster cannot be registered unto itself under id " + componentId);
 		} else {
 			standardCluster.registerDependentCluster(this);
-		}
+		}*/
 	}
 
-	private Set<Cluster> dependentClusters = new HashSet<>();
+	private Set<Cluster> clustersDependingOn = new HashSet<>();
+
+	private boolean isRegisteredCluster(Cluster cluster) {
+		return clustersDependingOn.contains(cluster);
+	}
+
+/*	private Set<Cluster> dependentClusters = new HashSet<>();
 
 	private void registerDependentCluster(Cluster dependentCluster) {
 		dependentClusters.add(dependentCluster);
@@ -445,4 +464,6 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 	private boolean isRegisteredDependentCluster(Cluster cluster) {
 		return dependentClusters.contains(cluster);
 	}
+*/
+
 }

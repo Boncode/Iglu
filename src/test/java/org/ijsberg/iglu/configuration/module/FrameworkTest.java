@@ -128,7 +128,7 @@ public class FrameworkTest {
 		Component shoppingCenterComponent = new StandardComponent(shoppingCenter);
 
 		shopCluster.connect("Shopping Center", shoppingCenterComponent);
-		assertEquals(2, shoppingCenter.getListedShopNames().size());
+		assertEquals(1, shoppingCenter.getListedShopNames().size());
 	}
 
 
@@ -159,7 +159,7 @@ public class FrameworkTest {
 		Component shoppingCenterComponent = new StandardComponent(shoppingCenter);
 
 		shopCluster.connect("Shopping Center", shoppingCenterComponent);
-		assertEquals(2, shoppingCenter.getListedShopNames().size());
+		assertEquals(1, shoppingCenter.getListedShopNames().size());
 	}
 
 
@@ -177,7 +177,7 @@ public class FrameworkTest {
 		shopCluster.connect("Drugstore", shopComponent);
 
 		Map<String, Component> components = shopCluster.getInternalComponents();
-		assertEquals(2, components.size());
+		assertEquals(1, components.size());
 
 
 		PhotoPrintService photoPrintService = new PhotoPrintServiceImpl("Photo Print Service");
@@ -192,7 +192,7 @@ public class FrameworkTest {
 		Component shoppingCenterComponent = new StandardComponent(shoppingCenter);
 
 		shopCluster.connect("Shopping Center", shoppingCenterComponent);
-		assertEquals(2, shoppingCenter.getListedShopNames().size());
+		assertEquals(1, shoppingCenter.getListedShopNames().size());
 	}
 
 	@Test
