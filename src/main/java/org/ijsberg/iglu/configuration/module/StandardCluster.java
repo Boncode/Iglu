@@ -83,7 +83,9 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 		connect(componentId, component);
 		setExposedInterfaces(componentId, component, exposedInterfaces);
 
-		registerExternalComponentAsListener(componentId, component);
+		for(Cluster dependentCluster : dependentClusters) {
+			dependentCluster.connect(componentId, component);
+		}
 	}
 
 	/**
@@ -297,6 +299,8 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 	public Object getProxy(String componentId, Class<?> exposedInterface) {
 
 		Component component = getInternalComponent(componentId);
+		//TODO check if interface truly exposed
+		//TODO return T
 		return component.createProxy(exposedInterface);
 	}
 
@@ -400,4 +404,45 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 	}
 
 
+	////////////////////////////////////
+	/**
+	 *
+	 * @param componentId
+	 * @param cluster
+	 * @throws ConfigurationException if the component is already registered
+	 */
+	@Override
+	public void connect(String componentId, Cluster cluster) throws ConfigurationException {
+
+		if(!(cluster instanceof StandardCluster)) {
+			throw new ConfigurationException("cannot connect cluster " + componentId + " of type " + cluster.getClass().getSimpleName() + " to StandardCluster");
+		}
+		StandardCluster standardCluster = (StandardCluster) cluster;
+		connect(componentId, new StandardComponent(cluster));
+		if(standardCluster.isRegisteredDependentCluster(this)) {
+			System.out.println("WARNING: already registered as dependent cluster on " + componentId);
+		} else if(standardCluster == this) {
+			System.out.println("WARNING: cluster cannot be registered unto itself under id " + componentId);
+		} else {
+			standardCluster.registerDependentCluster(this);
+		}
+	}
+
+	private Set<Cluster> dependentClusters = new HashSet<>();
+
+	private void registerDependentCluster(Cluster dependentCluster) {
+		dependentClusters.add(dependentCluster);
+		for(String componentId : exposedInterfacesByComponentId.keySet()) {
+			Component component = internalComponentsById.get(componentId);
+			if(dependentCluster.getInternalComponents().containsKey(componentId)) {
+				System.out.println("WARNING: component already registered under ID " + componentId);
+			} else {
+				dependentCluster.connect(componentId, component);
+			}
+		}
+	}
+
+	private boolean isRegisteredDependentCluster(Cluster cluster) {
+		return dependentClusters.contains(cluster);
+	}
 }

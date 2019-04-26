@@ -70,4 +70,6 @@ public interface Cluster extends Connector {
 	 * @return a facade that represents the cluster
 	 */
 	Facade getFacade();
+
+	void connect(String componentId, Cluster cluster) throws ConfigurationException;
 }

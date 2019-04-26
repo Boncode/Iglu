@@ -102,6 +102,100 @@ public class FrameworkTest {
 	}
 
 	@Test
+	public void testClusterInterconnection() throws Exception {
+
+		ShopImpl drugstore = new ShopImpl("The Drugstore");
+		Component shopComponent = new StandardComponent(drugstore);
+
+		Cluster shopCluster = new StandardCluster();
+		shopCluster.connect("Drugstore", shopComponent);
+
+		Map<String, Component> components = shopCluster.getInternalComponents();
+		assertEquals(1, components.size());
+
+		Cluster serviceCluster = new StandardCluster();
+		shopCluster.connect("Service", serviceCluster);
+
+		PhotoPrintService photoPrintService = new PhotoPrintServiceImpl("Photo Print Service");
+		Component photoPrintServiceComponent = new StandardComponent(photoPrintService);
+
+		assertFalse(drugstore.hasPhotoPrintService());
+		serviceCluster.connect("PhotoPrintService", photoPrintServiceComponent, PhotoPrintService.class);
+		assertTrue(drugstore.hasPhotoPrintService());
+
+		//
+		ShoppingCenterImpl shoppingCenter = new ShoppingCenterImpl();
+		Component shoppingCenterComponent = new StandardComponent(shoppingCenter);
+
+		shopCluster.connect("Shopping Center", shoppingCenterComponent);
+		assertEquals(2, shoppingCenter.getListedShopNames().size());
+	}
+
+
+	@Test
+	public void testClusterInterconnection_reverseRegistrationOrder() throws Exception {
+
+		ShopImpl drugstore = new ShopImpl("The Drugstore");
+		Component shopComponent = new StandardComponent(drugstore);
+
+		Cluster shopCluster = new StandardCluster();
+		shopCluster.connect("Drugstore", shopComponent);
+
+		Map<String, Component> components = shopCluster.getInternalComponents();
+		assertEquals(1, components.size());
+
+		Cluster serviceCluster = new StandardCluster();
+
+		PhotoPrintService photoPrintService = new PhotoPrintServiceImpl("Photo Print Service");
+		Component photoPrintServiceComponent = new StandardComponent(photoPrintService);
+		serviceCluster.connect("PhotoPrintService", photoPrintServiceComponent, PhotoPrintService.class);
+
+		shopCluster.connect("Service", serviceCluster);
+
+		assertTrue(drugstore.hasPhotoPrintService());
+
+		//
+		ShoppingCenterImpl shoppingCenter = new ShoppingCenterImpl();
+		Component shoppingCenterComponent = new StandardComponent(shoppingCenter);
+
+		shopCluster.connect("Shopping Center", shoppingCenterComponent);
+		assertEquals(2, shoppingCenter.getListedShopNames().size());
+	}
+
+
+	@Test
+	public void testClusterInterconnection_reverseRegistrationOrder_2() throws Exception {
+
+		Cluster shopCluster = new StandardCluster();
+		Cluster serviceCluster = new StandardCluster();
+		shopCluster.connect("Service", serviceCluster);
+
+
+		ShopImpl drugstore = new ShopImpl("The Drugstore");
+		Component shopComponent = new StandardComponent(drugstore);
+
+		shopCluster.connect("Drugstore", shopComponent);
+
+		Map<String, Component> components = shopCluster.getInternalComponents();
+		assertEquals(2, components.size());
+
+
+		PhotoPrintService photoPrintService = new PhotoPrintServiceImpl("Photo Print Service");
+		Component photoPrintServiceComponent = new StandardComponent(photoPrintService);
+		serviceCluster.connect("PhotoPrintService", photoPrintServiceComponent, PhotoPrintService.class);
+
+
+		assertTrue(drugstore.hasPhotoPrintService());
+
+		//
+		ShoppingCenterImpl shoppingCenter = new ShoppingCenterImpl();
+		Component shoppingCenterComponent = new StandardComponent(shoppingCenter);
+
+		shopCluster.connect("Shopping Center", shoppingCenterComponent);
+		assertEquals(2, shoppingCenter.getListedShopNames().size());
+	}
+
+	@Test
 	public void testFacadeing() throws Exception {
 		ShopImpl drugstore = new ShopImpl("The Drugstore");
 		Component shopComponent = new StandardComponent(drugstore);
