@@ -61,5 +61,5 @@ public interface Facade {
 	 * @param exposedInterface
 	 * @return a proxy for a component that exposes the desired interface
 	 */
-	Object getProxy(String componentId, Class<?> exposedInterface);
+	<T> T getProxy(String componentId, Class<T> exposedInterface);
 }
