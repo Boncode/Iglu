@@ -317,7 +317,7 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 	 * @return
 	 */
 	private Set<String> lookUpComponentIds(Component component) {
-		Set<String> retval = new HashSet<String>();
+		Set<String> retval = new HashSet<>();
 		for (String componentId : internalComponentsById.keySet()) {
 			if (internalComponentsById.get(componentId) == component) {
 				retval.add(componentId);
@@ -399,7 +399,7 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 			}
 		}
 		ensureComponentExposesInterfaces(this.getInternalComponent(internalComponentId), Arrays.asList(interfaces));
-		exposedInterfacesByComponentId.put(internalComponentId, new HashSet<Class<?>>(Arrays.asList(interfaces)));
+		exposedInterfacesByComponentId.put(internalComponentId, new HashSet<>(Arrays.asList(interfaces)));
 		this.setInterfacesInExternalComponents(internalComponentId, interfaces);
 	}
 
