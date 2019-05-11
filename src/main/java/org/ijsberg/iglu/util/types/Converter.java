@@ -254,7 +254,7 @@ public abstract class Converter {
 		Object[] alternativeObjects = new Object[objects.length];
 		if (targetTypes.length == objects.length) {
 			for (int j = 0; j < objects.length; j++) {
-				if (objects[j] == null || targetTypes[j] == objects[j].getClass()) {
+				if (objects[j] == null || targetTypes[j].isAssignableFrom(objects[j].getClass())) {
 					alternativeObjects[j] = objects[j];
 				} else {
 					alternativeObjects[j] = convertToObject(objects[j], targetTypes[j]);

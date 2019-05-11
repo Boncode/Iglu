@@ -44,4 +44,8 @@ public class IgluInstantiationException extends InstantiationException {
 			cause.printStackTrace(out);
 		}
 	}
+
+	public Throwable getCause() {
+		return cause;
+	}
 }
