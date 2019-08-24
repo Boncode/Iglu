@@ -35,7 +35,7 @@ import java.util.*;
 public class ReflectionSupport {
 
 	/**
-	 * @param clasz
+	 * @param clasz<?>
 	 * @return a list of all classes the given class extends
 	 */
 	public static ArrayList<Class<?>> getAllSuperClassesFromClass(Class<?> clasz) {
@@ -51,7 +51,7 @@ public class ReflectionSupport {
 	 * @param clasz
 	 * @return a list of all classes the given class extends
 	 */
-	public static <T extends Object> ArrayList<Class<T>> getAllSuperClassesFromClass(Class<?> clasz, Class<T> ultimateSuperType) {
+	public static <T> ArrayList<Class<T>> getAllSuperClassesFromClass(Class<?> clasz, Class<T> ultimateSuperType) {
 		ArrayList<Class<T>> result = new ArrayList<Class<T>>();
 		while (clasz.getSuperclass() != null && ultimateSuperType.isAssignableFrom(clasz.getSuperclass())) {
 			result.add((Class<T>)clasz.getSuperclass());
