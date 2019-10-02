@@ -278,7 +278,7 @@ public class ReflectionSupport {
 	 * @return
 	 * @throws InstantiationException
 	 */
-	private static Object instantiateClass(Class<?> clasz, Constructor<?> constructor, Object... initArgs) throws InstantiationException {
+	private static Object instantiateClass(Class<?> clasz, Constructor<?> constructor, Object[] initArgs) throws InstantiationException {
 		try {
 			return constructor.newInstance(initArgs);
 		} catch (InvocationTargetException ite) {
