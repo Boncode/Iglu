@@ -61,6 +61,7 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 	 * @throws ConfigurationException if the component is already registered
 	 */
 	public void connect(String componentId, Component component) throws ConfigurationException {
+		System.out.println("connecting component with id " + componentId);
 		if (isConnectedExternally(component)) {
 			throw new ConfigurationException("component " + component + " is already connected as external component");
 		}
@@ -71,7 +72,7 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 		for(Cluster cluster : clustersDependingOn) {
 			cluster.getFacade().connect(component);
 		}
-
+		System.out.println("component with id " + componentId + " connected");
 	}
 
 	/**
