@@ -38,13 +38,14 @@ public class StandardComponent implements Component, InvocationHandler {
 	public static final String REGISTER_LISTENER_METHOD_NAME = "register";
 	public static final String UNREGISTER_LISTENER_METHOD_NAME = "unregister";
 
-	private Object implementation;
+	protected Object implementation;
 	private Class<?>[] interfaces;
 	private Properties properties;
 	private Properties setterInjectedProperties = new Properties();
 
 	private HashMap<Class<?>, InvocationHandler> invocationHandlers = new HashMap<Class<?>, InvocationHandler>();
 	private HashMap<String, Set<Class<?>>> injectedProxyTypesByComponentId = new HashMap<String, Set<Class<?>>>();
+	private HashMap<Class<?>,Object> injectedProxiesByType = new HashMap<>();
 
 	private Map<Component, Map<Class<?>, Object>> registeredListenersByComponent = new HashMap<Component, Map<Class<?>, Object>>();
 
@@ -67,6 +68,7 @@ public class StandardComponent implements Component, InvocationHandler {
 		} else {
 			Set<Class<?>> injectedProxyTypes = injectProxies(componentId, Arrays.asList(interfaces), facade);
 			injectedProxyTypesByComponentId.put(componentId, injectedProxyTypes);
+			addFacadeByType(Arrays.asList(interfaces), facade, componentId);
 		}
 	}
 
@@ -93,7 +95,17 @@ public class StandardComponent implements Component, InvocationHandler {
 
 		if (currentlyInjectedInterfaces.isEmpty()) {
 			injectedProxyTypesByComponentId.remove(componentId);
+			removeFacadeByType(Arrays.asList(interfaces));
 		}
+	}
+
+	private void removeFacadeByType(Collection<Class<?>> interfaces) {
+		if(interfaces != null) {
+			for(Class<?> interfaceX : interfaces) {
+				injectedProxiesByType.remove(interfaceX);
+			}
+		}
+
 	}
 
 	/**
@@ -101,7 +113,9 @@ public class StandardComponent implements Component, InvocationHandler {
 	 */
 	public void removeDependency(String componentId) {
 //		injectNulls(componentId, injectedProxyTypesByComponentId.get(componentId));
-		injectedProxyTypesByComponentId.remove(componentId);
+		Set<Class<?>> removedInterfaces = injectedProxyTypesByComponentId.remove(componentId);
+		removeFacadeByType(removedInterfaces);
+
 	}
 
 	/**
@@ -187,6 +201,10 @@ public class StandardComponent implements Component, InvocationHandler {
 		return (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class[]{interfaceClass}, this);
 	}
 
+
+	protected <T> T getProxyForComponentReference(Class<T> interfaceClass) {
+		return (T) injectedProxiesByType.get(interfaceClass);
+	}
 
 	private HashMap<Class<?>, Object> proxiesByInterface = new HashMap();
 
@@ -353,5 +371,11 @@ public class StandardComponent implements Component, InvocationHandler {
 	@Override
 	public boolean implementsInterface(Class<?> interfaceClass) {
 		return interfaceClass.isAssignableFrom(implementation.getClass());
+	}
+
+	private void addFacadeByType(Collection<Class<?>> interfaces, Facade facade, String componentId) {
+		for(Class<?> interfaceX : interfaces) {
+			injectedProxiesByType.put(interfaceX, facade.getProxy(componentId, interfaceX));
+		}
 	}
 }
