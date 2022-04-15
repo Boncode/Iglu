@@ -224,11 +224,11 @@ public class ReflectionSupport {
 	}
 
 	private static String getInstantiationDetails(Class clasz, Object[] initargs) {
-		String retval = clasz.getName() + " with arguments: " + getArguemntTypes(initargs);
+		String retval = clasz.getName() + " with arguments: " + getArgumentTypes(initargs);
 		return retval;
 	}
 
-	private static String getArguemntTypes(Object[] initargs) {
+	private static String getArgumentTypes(Object[] initargs) {
 		StringBuffer result = new StringBuffer();
 		for(Object initArg : initargs) {
 			result.append((result.length() > 0 ? ",":"") + initArg.getClass().getSimpleName());
