@@ -307,8 +307,7 @@ public class StandardComponent implements Component, InvocationHandler {
 	}
 
 	@Override
-	public Object invoke(Object proxy, Method method, Object[] parameters)
-			throws Throwable {
+	public Object invoke(Object proxy, Method method, Object[] parameters) throws Throwable {
 
 		//get handler for specific proxy interface
 		InvocationHandler handler = null;
