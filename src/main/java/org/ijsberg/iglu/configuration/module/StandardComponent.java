@@ -130,6 +130,7 @@ public class StandardComponent implements Component, InvocationHandler {
 				invokeMethod(method, listenerProxy);
 				saveRegisteredListenerProxy(component, interfaceClass, listenerProxy);
 			} catch (NoSuchMethodException ignore) {
+				System.out.println("FAILED to register proxy for " + interfaceClass.getSimpleName() + " in component " + this.implementation.getClass().getSimpleName());
 			}
 		}
 	}
