@@ -48,13 +48,13 @@ public interface Facade {
 	/**
 	 * @return IDs of components that expose interfaces
 	 */
-	public Set<String> getExposedComponentIds();
+	Set<String> getExposedComponentIds();
 
 	/**
 	 * @param componentId
 	 * @return an array of exposed interfaces of a certain component
 	 */
-	public Class<?>[] getExposedInterfaces(String componentId);
+	Class<?>[] getExposedInterfaces(String componentId);
 
 	/**
 	 * @param componentId

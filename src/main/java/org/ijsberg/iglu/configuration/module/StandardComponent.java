@@ -45,7 +45,10 @@ public class StandardComponent implements Component, InvocationHandler {
 
 	private HashMap<Class<?>, InvocationHandler> invocationHandlers = new HashMap<Class<?>, InvocationHandler>();
 	private HashMap<String, Set<Class<?>>> injectedProxyTypesByComponentId = new HashMap<String, Set<Class<?>>>();
+	//proxies that have actually been injected in the implementation via a setter
 	private HashMap<Class<?>,Object> injectedProxiesByType = new HashMap<>();
+	//proxies that are available to the component (but not necessarily injected in the implementation via a setter)
+	private HashMap<Class<?>,Object> allProxiesByType = new HashMap<>();
 
 	private Map<Component, Map<Class<?>, Object>> registeredListenersByComponent = new HashMap<Component, Map<Class<?>, Object>>();
 
@@ -64,12 +67,14 @@ public class StandardComponent implements Component, InvocationHandler {
 	public void setReference(Facade facade, String componentId, Class<?>... interfaces) {
 
 		if (injectedProxyTypesByComponentId.containsKey(componentId)) {
+			//not sure if this helps, it is probably meant to make the last injection work exactly as configured
+			//  and remove any other dependencies
 			resetReference(facade, componentId, interfaces);
-		} else {
+		} //else {
 			Set<Class<?>> injectedProxyTypes = injectProxies(componentId, Arrays.asList(interfaces), facade);
 			injectedProxyTypesByComponentId.put(componentId, injectedProxyTypes);
 			addFacadeByType(Arrays.asList(interfaces), facade, componentId);
-		}
+		//}
 	}
 
 	/**
@@ -103,9 +108,9 @@ public class StandardComponent implements Component, InvocationHandler {
 		if(interfaces != null) {
 			for(Class<?> interfaceX : interfaces) {
 				injectedProxiesByType.remove(interfaceX);
+				allProxiesByType.remove(interfaceX);
 			}
 		}
-
 	}
 
 	/**
@@ -177,24 +182,11 @@ public class StandardComponent implements Component, InvocationHandler {
 					invokeMethod(setter, proxy);
 					injectedProxyTypes.add(interfaceClass);
 				}
+				allProxiesByType.put(interfaceClass, facade.getProxy(otherComponentId, interfaceClass));
 			}
 		}
 		return injectedProxyTypes;
 	}
-
-	/*
-
-		//potentially unsafe behavior
-		private void injectNulls(String otherComponentId, Set<Class<?>> interfaces) {
-			for (Method setter : getComponentSettersByPropertyKey(otherComponentId)) {
-				for (Class<?> interfaceClass : interfaces) {
-					if (setter.getParameterTypes()[0].isAssignableFrom(interfaceClass)) {
-						invokeMethod(setter, null);
-					}
-				}
-			}
-		}
-	   */
 
 	@Override
 	public <T> T createProxy(Class<T> interfaceClass) {
@@ -204,7 +196,7 @@ public class StandardComponent implements Component, InvocationHandler {
 
 
 	protected <T> T getProxyForComponentReference(Class<T> interfaceClass) {
-		return (T) injectedProxiesByType.get(interfaceClass);
+		return (T) allProxiesByType.get(interfaceClass);
 	}
 
 	private HashMap<Class<?>, Object> proxiesByInterface = new HashMap();
@@ -376,6 +368,7 @@ public class StandardComponent implements Component, InvocationHandler {
 	private void addFacadeByType(Collection<Class<?>> interfaces, Facade facade, String componentId) {
 		for(Class<?> interfaceX : interfaces) {
 			injectedProxiesByType.put(interfaceX, facade.getProxy(componentId, interfaceX));
+			allProxiesByType.put(interfaceX, facade.getProxy(componentId, interfaceX));
 		}
 	}
 }

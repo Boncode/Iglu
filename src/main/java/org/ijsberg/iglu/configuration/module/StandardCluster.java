@@ -85,7 +85,7 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 	 */
 	public void connect(String componentId, Component component, Class<?>... exposedInterfaces) throws ConfigurationException {
 
-		ensureComponentExposesInterfaces(component, Arrays.<Class<?>>asList(exposedInterfaces));
+		ensureComponentExposesInterfaces(component, Arrays.asList(exposedInterfaces));
 		connect(componentId, component);
 		setExposedInterfaces(componentId, component, exposedInterfaces);
 	}
@@ -97,7 +97,7 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 	 */
 	private void setExposedInterfaces(String componentId, Component component,
 									  Class<?>... exposedInterfaces) {
-		exposedInterfacesByComponentId.put(componentId, new HashSet<Class<?>>(Arrays.asList(exposedInterfaces)));
+		exposedInterfacesByComponentId.put(componentId, new HashSet<>(Arrays.asList(exposedInterfaces)));
 		setInterfacesInExternalComponents(componentId, component);
 	}
 
