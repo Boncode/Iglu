@@ -300,4 +300,18 @@ public class ReflectionSupport {
 		}
 		return retval;
 	}
+
+	public static <T> List<T> getInnerEnumTypes(Class clasz, Class<T> enumClass) {
+		Class[] classes = clasz.getClasses();
+		for (int i = 0; i < classes.length; i++) {
+			if (enumClass.isAssignableFrom(enumClass)) {
+				ArrayList<T> retval = new ArrayList<>();
+				for(Object enumConstant : classes[i].getEnumConstants()) {
+					retval.add((T)enumConstant);
+				}
+				return retval;
+			}
+		}
+		return Collections.emptyList();
+	}
 }
