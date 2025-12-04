@@ -32,9 +32,9 @@ import java.util.*;
 
 public class StandardCluster implements Cluster, Facade, InvocationHandler {
 
-	private HashMap<String, Set<Class<?>>> exposedInterfacesByComponentId = new HashMap<String, Set<Class<?>>>();
-	private Set<Component> externalComponents = new HashSet<Component>();
-	private HashMap<String, Component> internalComponentsById = new HashMap<String, Component>();
+	private HashMap<String, Set<Class<?>>> exposedInterfacesByComponentId = new LinkedHashMap<>();
+	private Set<Component> externalComponents = new LinkedHashSet<>();
+	private HashMap<String, Component> internalComponentsById = new LinkedHashMap<>();
 
 	@Override
 	public boolean isConnected(Component component) {
@@ -301,8 +301,8 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 	public<T> T getProxy(String componentId, Class<T> exposedInterface) {
 
 		Component component = getInternalComponent(componentId);
-		//FIXME
-		/*if(!this.exposedInterfacesByComponentId.get(componentId).contains(exposedInterface)) {
+		//FIXME next statement fails when internally creating cached proxy before administration is done
+/*		if(!isExposed(componentId) || !this.exposedInterfacesByComponentId.get(componentId).contains(exposedInterface)) {
 			throw new ConfigurationException("interface " + exposedInterface.getSimpleName() + " of component with id '" + componentId + "' is not exposed");
 		}*/
 		return component.createProxy(exposedInterface);
@@ -356,7 +356,7 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 		Object retval;
 		if (method.getName().equals("getProxy")) {
 			if (!isExposed((String) arguments[0], (Class<?>) arguments[1])) {
-				throw new ConfigurationException((String) arguments[0] + " does not expose " + arguments[1]);
+				throw new ConfigurationException(arguments[0] + " does not expose " + arguments[1]);
 			}
 		}
 		try {
@@ -378,14 +378,14 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 	 * @return
 	 */
 	public Map<String, Component> getInternalComponents() {
-		return new HashMap<String, Component>(internalComponentsById);
+		return new HashMap<>(internalComponentsById);
 	}
 
 	/**
 	 * @return
 	 */
 	public Set<Component> getExternalComponents() {
-		return new HashSet<Component>(externalComponents);
+		return new HashSet<>(externalComponents);
 	}
 
 	/**
